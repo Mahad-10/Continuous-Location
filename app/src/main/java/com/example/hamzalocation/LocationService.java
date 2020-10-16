@@ -1,7 +1,6 @@
 package com.example.hamzalocation;
 
 import android.Manifest;
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -9,12 +8,10 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
@@ -36,8 +33,10 @@ import pk.codebase.requests.HttpRequest;
 import pk.codebase.requests.HttpResponse;
 
 public class LocationService extends Service {
+
     public LocationService() {
     }
+
 
     private LocationCallback locationCallback = new LocationCallback() {
         @Override
@@ -108,29 +107,30 @@ public class LocationService extends Service {
                 .requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
         startForeground(Constants.Location_Service_ID,builder.build());
     }
-
-    private void stopLocationService(){
-        LocationServices.getFusedLocationProviderClient(this)
-                .removeLocationUpdates(locationCallback);
-        stopForeground(true);
-        stopSelf();
-    }
+//
+//    private void stopLocationService(){
+//        LocationServices.getFusedLocationProviderClient(this)
+//                .removeLocationUpdates(locationCallback);
+//        stopForeground(true);
+//        stopSelf();
+//    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null){
             String action = intent.getAction();
             if (action != null){
-                if (action.equals(Constants.ACTION_START_LOCATION_SERVICE)){
+                if (action.equals(Constants.ACTION_START_LOCATION_SERVICE)) {
                     startLocationUpdates();
-                }else if (action.equals(Constants.ACTION_STOP_LOCATION_SERVICE)){
-                    stopLocationService();
                 }
+//                }else if (action.equals(Constants.ACTION_STOP_LOCATION_SERVICE)){
+//                    stopLocationService();
+//                }
             }
         }
         return super.onStartCommand(intent, flags, startId);
     }
-    private void sendLocation(final double latitude, final double longitude) {
+    private void sendLocation(final double latitude,final double longitude) {
         List<Object> args = new ArrayList<>();
         args.add(latitude);
         args.add(longitude);

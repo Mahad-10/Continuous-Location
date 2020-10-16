@@ -13,11 +13,11 @@
         android:layout_height="wrap_content"
         android:text="StartLocation"/>
 
-    <Button
-        android:id="@+id/buttonStopLocationUpdates"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="StopLocation"/>
+<!--    <Button-->
+<!--        android:id="@+id/buttonStopLocationUpdates"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="StopLocation"/>-->
 
 
 
