@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.app.ActivityManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -19,21 +20,30 @@ import android.widget.Toast;
 
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
+import com.google.android.gms.location.GeofencingEvent;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.util.List;
+
+import static com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_ENTER;
+
 
 public class MainActivity extends AppCompatActivity {
-
+    public static final double khanLatitude = 30.1915129;
+    public static final double khanLongitude = 71.443598;
     public static final String TAG = "MainActivity";
     public static final int REQUEST_CODE_LOCATION_PERMISSION = 1;
     private GeofenceHelper geofenceHelper;
     private GeofencingClient geofencingClient;
     private float GEOFENCE_RADIUS = 200;
     private String GEOFENCE_ID = "Some_Geofence_ID";
+    private int BACKGROUND_LOCATION_ACCESS_REQUEST_CODE = 10002;
+    private int FINE_LOCATION_ACCESS_REQUEST_CODE = 10001;
+
 
 
     @Override
@@ -44,8 +54,8 @@ public class MainActivity extends AppCompatActivity {
         geofencingClient = LocationServices.getGeofencingClient(this);
         geofenceHelper = new GeofenceHelper(this);
 
-        addGeofence(,GEOFENCE_RADIUS);
-
+        addGeofence(khanLatitude,khanLongitude,GEOFENCE_RADIUS);
+        addGeofence(30.1916055,71.4436271,GEOFENCE_RADIUS);
 
         findViewById(R.id.buttonStartLocationUpdates).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,13 +71,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
-//        findViewById(R.id.buttonStopLocationUpdates).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                stopLocationService();
-//            }
-//        });
     }
 
 
@@ -80,6 +83,15 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
             }
         }
+        if (requestCode == BACKGROUND_LOCATION_ACCESS_REQUEST_CODE){
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                Toast.makeText(this, "You can add Geofences...", Toast.LENGTH_SHORT).show();
+            }else {
+                Toast.makeText(this, "Background Location access is necessary for geofencing to trigger...",
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
+
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
@@ -109,17 +121,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void stopLocationService() {
-        if (!isLocationServiceRunning()) {
-            Intent intent = new Intent(getApplicationContext(), LocationService.class);
-            intent.setAction(Constants.ACTION_STOP_LOCATION_SERVICE);
-            stopService(intent);
-            Toast.makeText(this, "Location Service Stopped", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void addGeofence(LatLng latLng, float radius) {
-        Geofence geofence = geofenceHelper.getGeofence(GEOFENCE_ID, latLng, radius,
+    private void addGeofence(double latitude,double longitude, float radius) {
+        Geofence geofence = geofenceHelper.getGeofence(GEOFENCE_ID, latitude,longitude, radius,
                 Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT);
         GeofencingRequest geofencingRequest = geofenceHelper.getGeofencingRequest(geofence);
         PendingIntent pendingIntent = geofenceHelper.getPendingIntent();
@@ -141,5 +144,7 @@ public class MainActivity extends AppCompatActivity {
                         Log.d(TAG,"OnFailure" + errorMessage);
                     }
                 });
+
+
     }
 }

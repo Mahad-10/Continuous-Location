@@ -17,6 +17,8 @@ import android.widget.Toast;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingEvent;
 import com.google.android.gms.location.LocationAvailability;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -32,7 +34,11 @@ import pk.codebase.requests.HttpError;
 import pk.codebase.requests.HttpRequest;
 import pk.codebase.requests.HttpResponse;
 
+import static com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_ENTER;
+
 public class LocationService extends Service {
+
+    private static final String TAG = "LocationSErvice";
 
     public LocationService() {
     }
@@ -107,25 +113,16 @@ public class LocationService extends Service {
                 .requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
         startForeground(Constants.Location_Service_ID,builder.build());
     }
-//
-//    private void stopLocationService(){
-//        LocationServices.getFusedLocationProviderClient(this)
-//                .removeLocationUpdates(locationCallback);
-//        stopForeground(true);
-//        stopSelf();
-//    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
         if (intent != null){
             String action = intent.getAction();
             if (action != null){
                 if (action.equals(Constants.ACTION_START_LOCATION_SERVICE)) {
                     startLocationUpdates();
                 }
-//                }else if (action.equals(Constants.ACTION_STOP_LOCATION_SERVICE)){
-//                    stopLocationService();
-//                }
             }
         }
         return super.onStartCommand(intent, flags, startId);

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 
-import com.google.android.gms.maps.model.LatLng;
 
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.location.Geofence;
@@ -25,9 +24,9 @@ public class GeofenceHelper extends ContextWrapper {
                 .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
                 .build();
     }
-    public Geofence getGeofence(String Id, LatLng latLng,float radius,int transitionType){
+    public Geofence getGeofence(String Id, double latitude,double longitude,float radius,int transitionType){
         return new Geofence.Builder()
-                .setCircularRegion(latLng.latitude,latLng.longitude,radius)
+                .setCircularRegion(latitude,longitude,radius)
                 .setRequestId(Id)
                 .setTransitionTypes(transitionType)
                 .setLoiteringDelay(5000)
@@ -40,7 +39,7 @@ public class GeofenceHelper extends ContextWrapper {
         if (pendingIntent != null){
             return pendingIntent;
         }else {
-            Intent intent = new Intent(this,MainActivity.class);
+            Intent intent = new Intent(this, BroadcastService.class);
             pendingIntent = PendingIntent.getBroadcast(this,2607,intent,PendingIntent.FLAG_UPDATE_CURRENT);
             return pendingIntent;
         }
